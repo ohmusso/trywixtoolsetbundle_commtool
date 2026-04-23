@@ -1,0 +1,11 @@
+﻿<Project Sdk="WixToolset.Sdk/7.0.0">
+  <PropertyGroup>
+    <AcceptEula>wix7</AcceptEula>
+    <Cultures>ja-JP;en-US</Cultures>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleApp1\ConsoleApp1.csproj" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
+    <PackageReference Include="WixToolset.Localization.wixext" Version="7.0.0" />
+  </ItemGroup>
+</Project>

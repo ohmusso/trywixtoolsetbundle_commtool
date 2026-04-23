@@ -1,0 +1,9 @@
+﻿<!--
+This file contains the declaration of all the localizable strings.
+-->
+<WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="ja-JP">
+
+	<String Id="DowngradeError" Value="新しいバージョンの [ProductName] が既にインストールされています。" />
+	<String Id="LicenseFile" Value="License_ja.rtf" />
+
+</WixLocalization>

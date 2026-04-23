@@ -1,0 +1,16 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+	<Bundle Id="TODO_Manufacturer.Bundle" Name="Bundle" Manufacturer="TODO Manufacturer" Version="1.0.0.0">
+		<BootstrapperApplication SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.exe">
+			<Payload SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.deps.json" Name="WpfApp1.deps.json" />
+			<Payload SourceFile="$(var.WpfApp1.TargetDir)runtimes\win-x64\native\mbanative.dll" Name="mbanative.dll" />
+			<Payload SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.runtimeconfig.json" Name="WpfApp1.runtimeconfig.json" />
+			<Payload SourceFile="$(var.WpfApp1.TargetDir)WixToolset.BootstrapperApplicationApi.dll" Name="WixToolset.BootstrapperApplicationApi.dll" />
+			<Payload SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.dll" Name="WpfApp1.dll" />
+		</BootstrapperApplication>
+
+		<Chain>
+			<MsiPackage SourceFile="$(var.Package.TargetDir)ja-JP\Package.msi" />
+		</Chain>
+
+	</Bundle>
+</Wix>

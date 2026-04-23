@@ -1,0 +1,16 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="../Bundle/Bundle.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0">
+    <Platform Solution="*|Any CPU" Project="x64" />
+  </Project>
+  <Project Path="../Package/Package.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0" Id="303acf62-b72c-4e46-9098-e7ef275e1dac">
+    <Platform Solution="*|Any CPU" Project="x64" />
+  </Project>
+  <Project Path="../WpfApp1/WpfApp1.csproj" Id="a708e654-72e3-42c4-a662-11fd73f8086f" />
+  <Project Path="ConsoleApp1.csproj" />
+</Solution>
