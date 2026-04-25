@@ -1,0 +1,21 @@
+{
+  "name": "hogehoge",
+  "enableDebug": false,
+  "datas": [
+    {
+      "name": "fugafuga",
+      "type": "char",
+      "value": "50"
+    },
+    {
+      "name": "piyopiyo",
+      "type": "short",
+      "value": "-1000"
+    },
+    {
+      "name": "pekepeke",
+      "type": "int",
+      "value": "123456789"
+    }
+  ]
+}

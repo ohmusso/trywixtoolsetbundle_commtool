@@ -7,26 +7,67 @@ namespace WpfApp1
 {
     using System.Windows;
     using System.Windows.Threading;
+    using TryWpfAppCommTool.ViewModels;
     using WixToolset.BootstrapperApplicationApi;
+    using WpfApp1.Views;
+
     public class CustomBA : BootstrapperApplication
     {
-        public Dispatcher BADispatcher { get; private set; }
-        public Window MainWindow { get; private set; }
-        
+        public Dispatcher? BADispatcher { get; private set; }
+        public Window? MainWindow { get; private set; }
+        public MainWindowViewModel? ViewModel { get; private set; }
+
+        private const BundleScope bundleScope = BundleScope.PerUser;
+        private LaunchAction launchAction = LaunchAction.Unknown;
+
         protected override void Run()
         {
             this.engine.Log(LogLevel.Standard, "BA IS ALIVE!");
 
-            this.engine.Detect();
-
             this.BADispatcher = Dispatcher.CurrentDispatcher;
 
-            MainWindow = new MainWindow(this);
-            MainWindow.Closed += (s, e) => this.BADispatcher.InvokeShutdown();
+            this.engine.Detect();
 
-            MainWindow.Show();
             Dispatcher.Run();
             this.engine.Quit(0);
+        }
+
+        protected override void OnDetectPackageComplete(DetectPackageCompleteEventArgs args)
+        {
+            base.OnDetectPackageComplete(args);
+
+            var dispText = "Installを実行します。";
+            if (args.State == PackageState.Absent)
+            {
+                launchAction = LaunchAction.Install;
+            }
+            else if (args.State == PackageState.Present)
+            {
+                launchAction = LaunchAction.Uninstall;
+                dispText = "UnInstallを実行します。";
+            }
+            else
+            {
+                this.engine.Log(LogLevel.Error, $"検出完了 パッケージ: {args.PackageId} の状態: {args.State}");
+                this.engine.Quit(0);
+            }
+
+            // 状態が Present であればインストール済み
+            this.engine.Log(LogLevel.Standard, $"検出完了: パッケージ {args.PackageId} の状態: {args.State}");
+
+            this.BADispatcher!.Invoke(() =>
+            {
+                this.ViewModel = new MainWindowViewModel(this);
+                ViewModel.DispText = dispText;
+
+                var window = new MainWindow();
+                window.DataContext = this.ViewModel; // DataContextにセット
+                this.MainWindow = window;
+
+                MainWindow.Closed += (s, e) => this.BADispatcher.InvokeShutdown();
+
+                MainWindow.Show();
+            });
         }
 
         protected override void OnStartup(WixToolset.BootstrapperApplicationApi.StartupEventArgs args)
@@ -49,18 +90,15 @@ namespace WpfApp1
         /// </summary>
         public void StartInstallation()
         {
-            this.engine.Log(LogLevel.Standard, "MSIのインストール処理を開始します。");
-
-            // 1. インストールを計画 (Plan)
-            // ユーザ毎のインストール
-            this.engine.Plan(LaunchAction.Install, BundleScope.PerUser);
+            this.engine.Log(LogLevel.Standard, $"MSIのインストール処理を開始します。 LaunchAction: {launchAction}, Scope: {bundleScope}");
+            this.engine.Plan(launchAction, bundleScope);
         }
 
         public void StartUninstallation()
         {
             this.engine.Log(LogLevel.Standard, "アンインストール処理を開始します。");
             // アンインストールとして計画を立てる
-            this.engine.Plan(LaunchAction.Uninstall, BundleScope.PerUser);
+            //this.engine.Plan(LaunchAction.Uninstall, BundleScope.PerUser);
         }
 
         // 計画が完了した時に呼ばれるイベントをオーバーライド
@@ -100,7 +138,7 @@ namespace WpfApp1
             this.engine.Log(LogLevel.Standard, $"Apply完了: ステータス 0x{args.Status:X}");
 
             // UIスレッド上で処理を行う
-            this.BADispatcher.Invoke(() =>
+            this.BADispatcher!.Invoke(() =>
             {
                 if (args.Status >= 0)
                 {
