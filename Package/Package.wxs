@@ -6,14 +6,15 @@
 		Scope="perUser"
 		Manufacturer="TODO Manufacturer" 
 		Version="1.0.0"
+		ProductCode="{76C31920-D0D1-4570-B88E-DB95999742BA}"
 	>
 		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 		<WixVariable Id="WixUILicenseRtf" Value="!(loc.LicenseFile)" />
 
 		<Feature Id="Main">
 			<ComponentGroupRef Id="ExampleComponents" />
+			<ComponentGroupRef Id="CleanupFolderComponents" />
 		</Feature>
 		
-		<ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 	</Package>
 </Wix>

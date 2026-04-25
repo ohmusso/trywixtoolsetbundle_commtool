@@ -6,6 +6,5 @@
   <ItemGroup>
     <ProjectReference Include="..\ConsoleApp1\ConsoleApp1.csproj" />
     <PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
-    <PackageReference Include="WixToolset.Localization.wixext" Version="7.0.0" />
   </ItemGroup>
 </Project>
