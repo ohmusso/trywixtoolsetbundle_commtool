@@ -25,6 +25,6 @@
             Width="150" Height="50"
             Command="{Binding InstallCommand}"
             Grid.Row="1"
-            IsEnabled="{Binding IsInstall}"/>
+         />
     </Grid>
 </Window>
