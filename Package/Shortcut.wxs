@@ -7,14 +7,14 @@
 				Directory="DesktopFolder"
 				WorkingDirectory="INSTALLFOLDER"
 				Target="[INSTALLFOLDER]\ConsoleApp1.exe"
-				 />
+			/>
 			<RegistryValue Root="HKCU"
 			   Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components"
 			   Name="DesktopShortcut"
 			   Type="integer"
 			   Value="1"
 			   KeyPath="yes"
-				/>
+			/>
 		</Component>
 	</Fragment>
 </Wix>

@@ -6,7 +6,8 @@
 		Scope="perUser"
 		Manufacturer="TODO Manufacturer" 
 		Version="1.0.0"
-		ProductCode="{76C31920-D0D1-4570-B88E-DB95999742BA}"
+		ProductCode="{DC64F2F3-3BAA-4AF4-9255-B7AB1F25D5E9}"
+		UpgradeCode="{AEA9E389-E9D4-4312-BBED-FE534C03CE77}"
 	>
 		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 		<WixVariable Id="WixUILicenseRtf" Value="!(loc.LicenseFile)" />
@@ -20,6 +21,9 @@
 		<Feature Id="ShortcutFeature" Title="Shortcut" Level="1">
 			<ComponentRef Id="DesktopShortcut" />
 			<Level Value="0" Condition="CREATESHORTCUT=&quot;0&quot;" />
-		</Feature>		
+		</Feature>
+
+		<CustomActionRef Id="CallHelloWorld" />
+		
 	</Package>
 </Wix>
