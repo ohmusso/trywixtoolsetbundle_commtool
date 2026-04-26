@@ -1,0 +1,20 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Fragment>
+		<Component Id="DesktopShortcut" Guid="{E1166A97-87B4-4995-9FB1-B74DB61910A6}">
+			<Shortcut Id="AppShortcut"
+				Name="My Console App"
+				Description="My Awesome Console Application"
+				Directory="DesktopFolder"
+				WorkingDirectory="INSTALLFOLDER"
+				Target="[INSTALLFOLDER]\ConsoleApp1.exe"
+				 />
+			<RegistryValue Root="HKCU"
+			   Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components"
+			   Name="DesktopShortcut"
+			   Type="integer"
+			   Value="1"
+			   KeyPath="yes"
+				/>
+		</Component>
+	</Fragment>
+</Wix>

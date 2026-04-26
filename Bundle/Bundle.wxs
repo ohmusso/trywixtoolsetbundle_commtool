@@ -9,8 +9,12 @@
 			<Payload SourceFile="$(var.WpfApp1.TargetDir)CommunityToolkit.Mvvm.dll" />
 		</BootstrapperApplication>
 
+		<Variable Name="CreateShortcut" Type="numeric" Value="1" />
+
 		<Chain>
-			<MsiPackage SourceFile="$(var.Package.TargetDir)ja-JP\Package.msi" />
+			<MsiPackage SourceFile="$(var.Package.TargetDir)ja-JP\Package.msi">
+				<MsiProperty Name="CREATESHORTCUT" Value="[CreateShortcut]" />
+			</MsiPackage>
 		</Chain>
 
 	</Bundle>

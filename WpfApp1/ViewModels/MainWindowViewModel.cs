@@ -15,7 +15,11 @@ namespace TryWpfAppCommTool.ViewModels
         }
 
         [ObservableProperty]
+        public partial bool IsInstall{ get; set; } = false;
+        [ObservableProperty]
         public partial string DispText { get; set; } = "none";
+        [ObservableProperty]
+        public partial bool IsShortcut{ get; set; } = false;
 
         //[RelayCommand]
         //private void UpdateCount()

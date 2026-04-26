@@ -11,10 +11,15 @@
 		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 		<WixVariable Id="WixUILicenseRtf" Value="!(loc.LicenseFile)" />
 
+		<Property Id="CREATESHORTCUT" Value="1" Secure="yes" />
+		
 		<Feature Id="Main">
-			<ComponentGroupRef Id="ExampleComponents" />
+			<ComponentGroupRef Id="AppComponents" />
 			<ComponentGroupRef Id="CleanupFolderComponents" />
 		</Feature>
-		
+		<Feature Id="ShortcutFeature" Title="Shortcut" Level="1">
+			<ComponentRef Id="DesktopShortcut" />
+			<Level Value="0" Condition="CREATESHORTCUT=&quot;0&quot;" />
+		</Feature>		
 	</Package>
 </Wix>

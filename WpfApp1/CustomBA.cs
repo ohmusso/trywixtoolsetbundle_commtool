@@ -37,6 +37,7 @@ namespace WpfApp1
             base.OnDetectPackageComplete(args);
 
             var dispText = "Installを実行します。";
+            var isInstall = true;
             if (args.State == PackageState.Absent)
             {
                 launchAction = LaunchAction.Install;
@@ -45,6 +46,7 @@ namespace WpfApp1
             {
                 launchAction = LaunchAction.Uninstall;
                 dispText = "UnInstallを実行します。";
+                isInstall = false;
             }
             else
             {
@@ -59,6 +61,7 @@ namespace WpfApp1
             {
                 this.ViewModel = new MainWindowViewModel(this);
                 ViewModel.DispText = dispText;
+                ViewModel.IsInstall = isInstall;
 
                 var window = new MainWindow();
                 window.DataContext = this.ViewModel; // DataContextにセット
@@ -90,7 +93,16 @@ namespace WpfApp1
         /// </summary>
         public void StartInstallation()
         {
-            this.engine.Log(LogLevel.Standard, $"MSIのインストール処理を開始します。 LaunchAction: {launchAction}, Scope: {bundleScope}");
+            if (ViewModel!.IsShortcut)
+            {
+                this.engine.SetVariableNumeric("CreateShortcut", 1);
+            }
+            else
+            {
+                this.engine.SetVariableNumeric("CreateShortcut", 0);
+            }
+
+            this.engine.Log(LogLevel.Standard, $"MSIのインストール処理を開始します。 LaunchAction: {launchAction}, Scope: {bundleScope}, CreateShortcut: 0");
             this.engine.Plan(launchAction, bundleScope);
         }
 

@@ -1,6 +1,6 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<Fragment>
-		<ComponentGroup Id="ExampleComponents" Directory="INSTALLFOLDER">
+		<ComponentGroup Id="AppComponents" Directory="INSTALLFOLDER">
 			<Component Id="MainExecutable" Guid="{BA243F7E-C803-4A80-AD77-499E538E2182}">
 				<File Source="$(var.ConsoleApp1.TargetDir)ConsoleApp1.exe" />
 				<RegistryValue Root="HKCU"
@@ -9,13 +9,6 @@
 							   Type="integer"
 							   Value="1"
 							   KeyPath="yes" />
-				<Shortcut Id="AppShortcut"
-							  Name="My Console App"
-							  Description="My Awesome Console Application"
-							  Directory="DesktopFolder"
-							  WorkingDirectory="INSTALLFOLDER"
-						      Target="[INSTALLFOLDER]\ConsoleApp1.exe"
-				 />
 			</Component>
 			<Component Id="ConsoleApp1.runtimeconfig.json" Guid="{F59BE621-FDC2-42AD-98C3-033D66637500}">
 				<File Source="$(var.ConsoleApp1.TargetDir)ConsoleApp1.runtimeconfig.json" />
