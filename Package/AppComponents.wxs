@@ -20,7 +20,7 @@
 							   KeyPath="yes" />
 			</Component>
 			<Component Id="SettingFile" Guid="{1037D81D-ADC6-48AD-9C5E-F4E4A60CF35E}">
-				<File Source="$(var.ConsoleApp1.TargetDir)setting.json" />
+				<File Source="$(var.ConsoleApp1.TargetDir)settings.json" />
 				<RegistryValue Root="HKCU"
 							   Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components"
 							   Name="SettingJson"

@@ -23,7 +23,30 @@
 			<Level Value="0" Condition="CREATESHORTCUT=&quot;0&quot;" />
 		</Feature>
 
-		<CustomActionRef Id="CallHelloWorld" />
-		
+
+		<!-- Custom Action -->
+		<Binary Id="CustomActionDLL" SourceFile="$(var.CustomAction.TargetDir)CustomAction.CA.dll" />
+
+		<CustomAction Id="CallBeginCustomAction"
+						  BinaryRef="CustomActionDLL"
+						  DllEntry="CustomAction"
+						  Execute="immediate" />
+
+		<CustomAction Id="SetInstallFolder"
+					  Property="DoSettings"
+					  Value="INSTALLFOLDER=[INSTALLFOLDER]" />
+
+		<CustomAction Id="DoSettings"
+					  BinaryRef="CustomActionDLL"
+					  DllEntry="DoSettings"
+					  Execute="deferred"
+					  Impersonate="no" />
+
+		<InstallExecuteSequence>
+			<Custom Action="CallBeginCustomAction" Before="LaunchConditions" />
+			<Custom Action="SetInstallFolder" Before="InstallFinalize" />
+			<Custom Action="DoSettings" After="SetInstallFolder" />
+		</InstallExecuteSequence>
+
 	</Package>
 </Wix>
