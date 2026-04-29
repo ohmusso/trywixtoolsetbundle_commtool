@@ -6,6 +6,7 @@
 			<Payload SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.runtimeconfig.json" Name="WpfApp1.runtimeconfig.json" />
 			<Payload SourceFile="$(var.WpfApp1.TargetDir)WixToolset.BootstrapperApplicationApi.dll" Name="WixToolset.BootstrapperApplicationApi.dll" />
 			<Payload SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.dll" Name="WpfApp1.dll" />
+			<Payload SourceFile="$(var.WpfApp1.TargetDir)Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" />
 			<Payload SourceFile="$(var.WpfApp1.TargetDir)CommunityToolkit.Mvvm.dll" />
 		</BootstrapperApplication>
 

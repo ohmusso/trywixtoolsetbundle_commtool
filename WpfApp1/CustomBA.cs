@@ -19,9 +19,12 @@ namespace WpfApp1
 
         private const BundleScope bundleScope = BundleScope.PerUser;
         private LaunchAction launchAction = LaunchAction.Unknown;
+        private CustomLog customLog;
 
         protected override void Run()
         {
+            customLog = new();
+
             this.engine.Log(LogLevel.Standard, "BA IS ALIVE!");
 
             this.BADispatcher = Dispatcher.CurrentDispatcher;
@@ -86,6 +89,10 @@ namespace WpfApp1
 
             var message = "Shutdown," + args.Action.ToString() + "," + args.HResult.ToString();
             this.engine.Log(LogLevel.Standard, message);
+
+            customLog.LogData.var1 = "hogehoge";
+            customLog.LogData.var2 = 100;
+            customLog.writeLog(this.engine.Log);
         }
 
         /// <summary>
