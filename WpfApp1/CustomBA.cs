@@ -109,6 +109,11 @@ namespace WpfApp1
                 this.engine.SetVariableNumeric("CreateShortcut", 0);
             }
 
+            if(launchAction == LaunchAction.Uninstall)
+            {
+                this.engine.SetVariableNumeric("CreateShortcut", 1); // アンインストール時は常に1としてショートカットを削除する
+            }
+
             this.engine.Log(LogLevel.Standard, $"MSIのインストール処理を開始します。 LaunchAction: {launchAction}, Scope: {bundleScope}, CreateShortcut: 0");
             this.engine.Plan(launchAction, bundleScope);
         }

@@ -1,6 +1,6 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<Fragment>
-		<Component Id="DesktopShortcut" Guid="{E1166A97-87B4-4995-9FB1-B74DB61910A6}">
+		<Component Id="DesktopShortcut" Guid="{1849143C-55EA-4220-936D-1E2532543061}">
 			<Shortcut Id="AppShortcut"
 				Name="My Console App"
 				Description="My Awesome Console Application"
