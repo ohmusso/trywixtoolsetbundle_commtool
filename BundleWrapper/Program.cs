@@ -12,7 +12,16 @@ namespace BundleWrapper
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
             // 2. artifact/Bundle/Bundle.exe へのパスを作成
+            string bundleWrapperExe = Path.Combine(baseDir, "BundleWrapper.exe");
             string bundleExe = Path.Combine(baseDir, "Bundle", "Bundle.exe");
+
+            // 3. コードサイニングの検証
+            if (!BundleWrapperCert.Verify(bundleWrapperExe))
+            {
+                Console.WriteLine("Enterキーを押して終了。");
+                Console.ReadLine();
+                return;
+            }
 
             // 3. ログパスの生成（AppData\Local\Temp\Setup_{GUID}.log）
             string tempDir = Path.GetTempPath(); // ユーザーの Temp フォルダを取得
