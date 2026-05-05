@@ -19,6 +19,7 @@ namespace WpfApp1
 
         private const BundleScope bundleScope = BundleScope.PerUser;
         private LaunchAction launchAction = LaunchAction.Unknown;
+        private LaunchAction commandAction = LaunchAction.Unknown;
         private CustomLog customLog;
 
         protected override void Run()
@@ -34,6 +35,15 @@ namespace WpfApp1
             Dispatcher.Run();
             this.engine.Quit(0);
         }
+        protected override void OnCreate(WixToolset.BootstrapperApplicationApi.CreateEventArgs args)
+        {
+            base.OnCreate(args);
+
+            commandAction = args.Command.Action;
+
+            this.engine.Log(LogLevel.Standard, $"OnCreate: Command Action is {commandAction}");
+            this.engine.Log(LogLevel.Standard, $"OnCreate: Command line is {args.Command.CommandLine}");
+        }
 
         protected override void OnDetectPackageComplete(DetectPackageCompleteEventArgs args)
         {
@@ -41,11 +51,20 @@ namespace WpfApp1
 
             var dispText = "Installを実行します。";
             var isInstall = true;
-            if (args.State == PackageState.Absent)
+            if (commandAction == LaunchAction.Install)
             {
-                launchAction = LaunchAction.Install;
+                if (args.State == PackageState.Absent)
+                {
+                    launchAction = LaunchAction.Install;
+                }
+                else
+                {
+                    launchAction = LaunchAction.Uninstall;
+                    dispText = "UnInstallを実行します。";
+                    isInstall = false;
+                }
             }
-            else if (args.State == PackageState.Present)
+            else if (commandAction == LaunchAction.Uninstall)
             {
                 launchAction = LaunchAction.Uninstall;
                 dispText = "UnInstallを実行します。";
@@ -53,8 +72,9 @@ namespace WpfApp1
             }
             else
             {
-                this.engine.Log(LogLevel.Error, $"検出完了 パッケージ: {args.PackageId} の状態: {args.State}");
-                this.engine.Quit(0);
+                launchAction = LaunchAction.Uninstall;
+                dispText = "UnInstallを実行します。";
+                isInstall = false;
             }
 
             // 状態が Present であればインストール済み
