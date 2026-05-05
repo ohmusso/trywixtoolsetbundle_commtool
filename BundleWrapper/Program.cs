@@ -18,17 +18,18 @@ namespace BundleWrapper
             // 3. コードサイニングの検証
             if (!BundleWrapperCert.Verify(bundleWrapperExe))
             {
+                Console.WriteLine("自己証明書が証明書ストアの信頼されたルート証明機関に登録されていることを確認してください。");
                 Console.WriteLine("Enterキーを押して終了。");
                 Console.ReadLine();
                 return;
             }
 
-            // 3. ログパスの生成（AppData\Local\Temp\Setup_{GUID}.log）
+            // 4. ログパスの生成（AppData\Local\Temp\Setup_{GUID}.log）
             string tempDir = Path.GetTempPath(); // ユーザーの Temp フォルダを取得
             string guid = Guid.NewGuid().ToString(); // GUID を生成
             string logPath = Path.Combine(tempDir, $"Setup_{guid}.log");
 
-            // 4. プロセス起動の設定
+            // 5. プロセス起動の設定
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = bundleExe,
