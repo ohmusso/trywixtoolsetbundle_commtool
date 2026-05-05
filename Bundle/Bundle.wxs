@@ -1,5 +1,11 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
-	<Bundle Id="TODO_Manufacturer.Bundle" Name="Bundle" Manufacturer="TODO Manufacturer" Version="1.0.0.0">
+	<Bundle
+		Id="TODO_Manufacturer.Bundle"
+		Name="Bundle"
+		Manufacturer="TODO Manufacturer"
+		UpgradeCode="{67E841C9-3044-4DFC-87CC-0D23BB72FD7C}"
+		Version="1.0.0"
+		>
 		<BootstrapperApplication SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.exe">
 			<Payload SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.deps.json" Name="WpfApp1.deps.json" />
 			<Payload SourceFile="$(var.WpfApp1.TargetDir)runtimes\win-x64\native\mbanative.dll" Name="mbanative.dll" />

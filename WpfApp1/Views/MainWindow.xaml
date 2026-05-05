@@ -24,6 +24,7 @@
             VerticalAlignment="Center" 
             Width="150" Height="50"
             Command="{Binding InstallCommand}"
+            IsEnabled ="{Binding IsNotInstalling}"
             Grid.Row="1"
          />
     </Grid>
