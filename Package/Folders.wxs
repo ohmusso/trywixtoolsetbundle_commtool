@@ -1,15 +1,21 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<Fragment>
 		<StandardDirectory Id="LocalAppDataFolder">
-			<Directory Id="INSTALLFOLDER" Name="!(bind.Property.Manufacturer) !(bind.Property.ProductName)" />
+			<Directory Id="INSTALLFOLDER" Name="!(bind.Property.Manufacturer) !(bind.Property.ProductName)">
+				<Directory Id="settings" Name="settings" />
+			</Directory>
 		</StandardDirectory>
 
 		<StandardDirectory Id="DesktopFolder" />
 		
-		<ComponentGroup Id="CleanupFolderComponents" Directory="INSTALLFOLDER">
-			<Component Id="CleanupInstallFolder" Guid="*">
+		<ComponentGroup Id="CleanupFolderComponents">
+			<Component Id="CleanupInstallFolder" Guid="*" Directory="INSTALLFOLDER">
 				<RegistryValue Root="HKCU" Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
 				<RemoveFolder Id="RemoveINSTALLFOLDER" On="uninstall" />
+			</Component>
+			<Component Id="Cleanup_settings" Guid="DA0BDEF9-6CAF-4861-BCE1-78723CFBBD8A" Directory="settings">
+				<RegistryValue Root="HKCU" Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components" Name="Cleanup_settings" Value="1" Type="integer" KeyPath="yes" />
+				<RemoveFolder Id="Remove_settings" On="uninstall" />
 			</Component>
 		</ComponentGroup>
 	</Fragment>
