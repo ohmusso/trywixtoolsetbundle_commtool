@@ -17,7 +17,7 @@
 
 	<Target Name="SignBundleEngine">
 		<Message Importance="high" Text="SignBundleEngine: @(SignBundleEngine)" />
-		<Exec Command="$(SignToolPath) sign /sha1 2820a4a82a4bfa5ee232dd4aa2aa73a694f268d5 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %(SignBundleEngine.FullPath)" />
+		<Exec Command="$(SignToolPath) sign /sha1 44c9bd434cc461cbb4eb84946c0ce5dc313fa817 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %(SignBundleEngine.FullPath)" />
 	</Target>
 	<Target Name="SignBundle">
 		<Message Importance="high" Text="SignBundle: @(SignBundle)" />
