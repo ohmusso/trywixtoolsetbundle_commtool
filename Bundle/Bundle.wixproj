@@ -1,11 +1,27 @@
 ﻿<Project Sdk="WixToolset.Sdk/7.0.0">
-  <PropertyGroup>
-    <AcceptEula>wix7</AcceptEula>
-    <OutputType>Bundle</OutputType>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="WixToolset.BootstrapperApplications.wixext" Version="7.0.0" />
-    <ProjectReference Include="..\Package\Package.wixproj" />
-    <ProjectReference Include="..\WpfApp1\WpfApp1.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<AcceptEula>wix7</AcceptEula>
+		<OutputType>Bundle</OutputType>
+	</PropertyGroup>
+	<PropertyGroup>
+		<SignOutput>true</SignOutput>
+	</PropertyGroup>
+	<PropertyGroup>
+		<SignToolPath>"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe"</SignToolPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="WixToolset.BootstrapperApplications.wixext" Version="7.0.0" />
+		<ProjectReference Include="..\Package\Package.wixproj" />
+		<ProjectReference Include="..\WpfApp1\WpfApp1.csproj" />
+	</ItemGroup>
+
+	<Target Name="SignBundleEngine">
+		<Message Importance="high" Text="SignBundleEngine: @(SignBundleEngine)" />
+		<Exec Command="$(SignToolPath) sign /sha1 2820a4a82a4bfa5ee232dd4aa2aa73a694f268d5 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %(SignBundleEngine.FullPath)" />
+	</Target>
+	<Target Name="SignBundle">
+		<Message Importance="high" Text="SignBundle: @(SignBundle)" />
+		<Exec Command="$(SignToolPath) sign /sha1 44c9bd434cc461cbb4eb84946c0ce5dc313fa817 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %(SignBundle.FullPath)" />
+	</Target>
+
 </Project>

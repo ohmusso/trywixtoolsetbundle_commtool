@@ -16,6 +16,14 @@ namespace BundleWrapper
             string bundleExe = Path.Combine(baseDir, "Bundle", "Bundle.exe");
 
             // 3. コードサイニングの検証
+            if (!BundleWrapperCert.Verify(bundleExe))
+            {
+                Console.WriteLine("自己証明書が証明書ストアの信頼されたルート証明機関に登録されていることを確認してください。");
+                Console.WriteLine("Enterキーを押して終了。");
+                Console.ReadLine();
+                return;
+            }
+
             if (!BundleWrapperCert.Verify(bundleWrapperExe))
             {
                 Console.WriteLine("自己証明書が証明書ストアの信頼されたルート証明機関に登録されていることを確認してください。");
