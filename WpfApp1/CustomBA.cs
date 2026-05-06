@@ -18,9 +18,16 @@ namespace WpfApp1
         public MainWindowViewModel? ViewModel { get; private set; }
 
         private const BundleScope bundleScope = BundleScope.PerUser;
+        // https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes
+        public const int ERROR_SUCCESS = 0;
+        public const int ERROR_CANCELLED = 1223;       // ユーザーによって操作が取り消されました。
+        public const int ERROR_INSTALL_FAILURE = 1603; // 重大なエラーが発生しました。
+        public const int ERROR_PRODUCT_VERSION = 1638; // この製品の別のバージョンが既にインストールされています。
+
         private LaunchAction launchAction = LaunchAction.Unknown;
         private LaunchAction commandAction = LaunchAction.Unknown;
         private Display displayLevel = Display.Unknown;
+        private RelatedOperation relatedOperation = RelatedOperation.None;
         private CustomLog customLog;
 
         protected override void OnCreate(WixToolset.BootstrapperApplicationApi.CreateEventArgs args)
@@ -46,6 +53,13 @@ namespace WpfApp1
             Dispatcher.Run();
             this.engine.Quit(0);
         }
+        protected override void OnDetectRelatedMsiPackage(DetectRelatedMsiPackageEventArgs args)
+        {
+            base.OnDetectRelatedMsiPackage(args);
+
+            this.engine.Log(LogLevel.Standard, $"関連するMSIパッケージを検出: パッケージ {args.Version} の状態: {args.Operation}");
+            relatedOperation = args.Operation;
+        }
 
         protected override void OnDetectPackageComplete(DetectPackageCompleteEventArgs args)
         {
@@ -58,6 +72,14 @@ namespace WpfApp1
                 if (args.State == PackageState.Absent)
                 {
                     launchAction = LaunchAction.Install;
+                }
+                else if (args.State == PackageState.Obsolete)
+                {
+                    // skip because downgrade install
+                    this.engine.Log(LogLevel.Standard, $"新しいバージョンが既にインストールされています。");
+                    System.Windows.MessageBox.Show("新しいバージョンが既にインストールされています。", "中断");
+                    this.BADispatcher.InvokeShutdown();
+                    this.engine.Quit(ERROR_PRODUCT_VERSION);
                 }
                 else
                 {
