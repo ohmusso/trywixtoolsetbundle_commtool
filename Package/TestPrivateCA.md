@@ -76,4 +76,6 @@ Export-Certificate -Cert $serverCert -FilePath $serverCertExportPath
 
 ## msiパッケージから証明書をインストール
 
-TODO
+wix拡張機能  Internet Information Services Extension のcertificateを使用する。
+
+<https://docs.firegiant.com/wix/schema/iis/certificate/>
