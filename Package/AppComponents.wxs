@@ -1,4 +1,5 @@
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+	 xmlns:iis="http://wixtoolset.org/schemas/v4/wxs/iis" >
 	<Fragment>
 		<ComponentGroup Id="AppComponents" Directory="INSTALLFOLDER">
 			<Component Id="cmp_ConsoleApp1_deps_json" Guid="9195E38E-A1A5-4B70-9CA5-EF916750ED26" Directory="INSTALLFOLDER">
@@ -24,6 +25,17 @@
 			<Component Id="cmp_settings_json" Guid="EE18C09B-0415-44EF-A6D0-E113E5E24EA3" Directory="settings">
 				<File Source="..\ConsoleApp1\bin\Release\net10.0\settings\settings.json" KeyPath="no" />
 				<RegistryValue Root="HKCU" Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components" Name="settings.json" Type="integer" Value="1" KeyPath="yes" />
+			</Component>
+			<Component Id="InstallIntermediateCert" Guid="{DA8E181E-A83F-4E07-BA8F-4988A4EA8557}" Directory="INSTALLFOLDER">
+				<!-- Certificate定義 -->
+				<!-- StoreName="CA" が「中間証明機関」ストアを指します -->
+				<iis:Certificate Id="TestIntermediateCert"
+									Name="TestIntermediateCert"
+									StoreLocation="currentUser"
+									StoreName="ca"
+									BinaryRef="IntermediateCertBinary"
+									Request="no" />
+				<RegistryValue Root="HKCU" Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components" Name="IntermediateCert" Type="integer" Value="1" KeyPath="yes" />
 			</Component>
 		</ComponentGroup>
 

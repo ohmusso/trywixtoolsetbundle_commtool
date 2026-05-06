@@ -24,6 +24,8 @@
 		</Feature>
 
 
+		<!-- 証明書ファイルのバイナリ登録 -->
+		<Binary Id="IntermediateCertBinary" SourceFile="TestIntermediateCA.cer" />
 		<!-- Custom Action -->
 		<Binary Id="CustomActionDLL" SourceFile="$(var.CustomAction.TargetDir)CustomAction.CA.dll" />
 
