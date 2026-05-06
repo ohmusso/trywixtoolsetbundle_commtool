@@ -1,4 +1,9 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+	 xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal"
+	 xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+
+	<?include ..\Package\Setting.wxi ?>
+
 	<Bundle
 		Id="TODO_Manufacturer.Bundle"
 		Name="Bundle"
@@ -18,9 +23,17 @@
 
 		<Variable Name="CreateShortcut" Type="numeric" Value="1" />
 
+		<util:RegistrySearch
+			Id="SearchLogDir"
+			Root="HKCU"
+			Key="Software\$(var.Manufacturer)\$(var.ProductName)\Components"
+			Value="LogPath"
+			Variable="REG_LOG_PATH" />
+		
 		<Chain>
 			<MsiPackage SourceFile="$(var.Package.TargetDir)ja-JP\Package.msi">
 				<MsiProperty Name="CREATESHORTCUT" Value="[CreateShortcut]" />
+				<MsiProperty Name="LOGPATH" Value="[LogPath]" />
 			</MsiPackage>
 		</Chain>
 

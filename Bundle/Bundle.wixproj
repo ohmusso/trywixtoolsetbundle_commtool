@@ -11,10 +11,10 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="WixToolset.BootstrapperApplications.wixext" Version="7.0.0" />
+		<PackageReference Include="WixToolset.Util.wixext" Version="7.0.0" />
 		<ProjectReference Include="..\Package\Package.wixproj" />
 		<ProjectReference Include="..\WpfApp1\WpfApp1.csproj" />
 	</ItemGroup>
-
 	<Target Name="SignBundleEngine">
 		<Message Importance="high" Text="SignBundleEngine: @(SignBundleEngine)" />
 		<Exec Command="$(SignToolPath) sign /sha1 44c9bd434cc461cbb4eb84946c0ce5dc313fa817 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %(SignBundleEngine.FullPath)" />
@@ -23,5 +23,4 @@
 		<Message Importance="high" Text="SignBundle: @(SignBundle)" />
 		<Exec Command="$(SignToolPath) sign /sha1 44c9bd434cc461cbb4eb84946c0ce5dc313fa817 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %(SignBundle.FullPath)" />
 	</Target>
-
 </Project>

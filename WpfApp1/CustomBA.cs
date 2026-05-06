@@ -49,7 +49,6 @@ namespace WpfApp1
 
         protected override void Run()
         {
-
             if (commandLineDictionary.TryGetValue("CUSTOMGUID", out string? guid))
             {
                 customLogData.guid = guid;
@@ -59,6 +58,7 @@ namespace WpfApp1
             var logPath = this.engine.GetVariableString("WixBundleLog");
             customLog = new(this.engine.Log, logPath, customLogData.guid);
 
+            this.engine.SetVariableString("LogPath", logPath, false);
 
             this.engine.Log(LogLevel.Standard, "BA IS ALIVE!");
 
@@ -83,6 +83,9 @@ namespace WpfApp1
         protected override void OnDetectPackageComplete(DetectPackageCompleteEventArgs args)
         {
             base.OnDetectPackageComplete(args);
+
+            var regLogPath = GetVariableString("REG_LOG_PATH", "");
+            this.engine.Log(LogLevel.Standard, $"regLogPath: {regLogPath}");
 
             var dispText = "Installを実行します。";
             var isInstall = true;
@@ -291,6 +294,18 @@ namespace WpfApp1
         {
             exitCode = excode;
             this.engine.Quit(excode);
+        }
+
+        private String GetVariableString(String varName, String defaultVal)
+        {
+            if (this.engine.ContainsVariable(varName))
+            {
+                return this.engine.GetVariableString(varName);
+            }
+            else
+            {
+                return defaultVal;
+            }
         }
 
         private Dictionary<string, string> ParseCommandLine(string commandLine)

@@ -1,0 +1,4 @@
+<Include xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<?define Manufacturer = TODO Manufacturer ?>
+	<?define ProductName = Package ?>
+</Include>
