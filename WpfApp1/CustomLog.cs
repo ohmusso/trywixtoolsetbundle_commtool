@@ -6,45 +6,39 @@ using WixToolset.BootstrapperApplicationApi;
 
 namespace WpfApp1
 {
-    public class LogData
+    public class CustomLogData
     {
-        public string var1 { get; set; }
-        public int var2 { get; set; }
+        public string guid { get; set; }
+        public int exitCode { get; set; }
     }
 
     public delegate void CustomBALog(LogLevel level, string messagey);
 
     public class CustomLog
     {
-        public LogData LogData = new();
-        public CustomLog() {
+        private String _filePath = "";
+        private CustomBALog _customBALog;
+        public CustomLog(CustomBALog customBALog, String logFilePath, String guid) {
+            string directoryPath = Path.GetDirectoryName(logFilePath);
+            string fileName = $"Customlog_{guid}.json";
+            _filePath = Path.Combine(directoryPath, fileName);
+
+            _customBALog = customBALog;
+            _customBALog(LogLevel.Standard, $"カスタムログフルパス: {_filePath}");
         }
 
-        public void writeLog(CustomBALog customBALog)
+        public void writeLog(CustomLogData LogData)
         {
-            customBALog(LogLevel.Standard, $"カスタムログ書き込み開始");
+            _customBALog(LogLevel.Standard, $"カスタムログ書き込み開始");
 
-            //// ログフォルダを作成
-            string targetDir = Path.Combine(Path.GetTempPath(), "hogehoge");
-            if (!Directory.Exists(targetDir))
-            {
-                Directory.CreateDirectory(targetDir);
-                customBALog(LogLevel.Standard, $"書き込み先ディレクトリ作成: ${targetDir}");
-            }
-
-
-            // ファイル名を作成
-            string fileName = $"{DateTime.Now:yyyyMMdd_HHmmss}.json";
-            string fullPath = Path.Combine(targetDir, fileName);
-            customBALog(LogLevel.Standard, $"カスタムログフルパス: {fullPath}");
 
             // --- 書き込み (Serialization) ---
             string jsonString = JsonConvert.SerializeObject(LogData, Formatting.Indented);
-            customBALog(LogLevel.Standard, $"Json文字列: {jsonString}");
+            _customBALog(LogLevel.Standard, $"Json文字列: {jsonString}");
 
-            File.WriteAllText(fullPath, jsonString);
+            File.WriteAllText(_filePath, jsonString);
 
-            customBALog(LogLevel.Standard, $"カスタムログ書き込み完了");
+            _customBALog(LogLevel.Standard, $"カスタムログ書き込み完了");
 
             // --- 読み込み (Deserialization) ---
             //if (File.Exists(fullPath))

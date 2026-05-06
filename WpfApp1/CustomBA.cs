@@ -18,17 +18,22 @@ namespace WpfApp1
         public MainWindowViewModel? ViewModel { get; private set; }
 
         private const BundleScope bundleScope = BundleScope.PerUser;
+
         // https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes
-        public const int ERROR_SUCCESS = 0;
-        public const int ERROR_CANCELLED = 1223;       // ユーザーによって操作が取り消されました。
-        public const int ERROR_INSTALL_FAILURE = 1603; // 重大なエラーが発生しました。
-        public const int ERROR_PRODUCT_VERSION = 1638; // この製品の別のバージョンが既にインストールされています。
+        public const int EXITCODE_SUCCESS = 0;
+        public const int EXITCODE_CANCELLED = 1223;       // ユーザーによって操作が取り消されました。
+        public const int EXITCODE_INSTALL_FAILURE = 1603; // 重大なエラーが発生しました。
+        public const int EXITCODE_PRODUCT_VERSION = 1638; // この製品の別のバージョンが既にインストールされています。
+        private int exitCode = 0;
 
         private LaunchAction launchAction = LaunchAction.Unknown;
         private LaunchAction commandAction = LaunchAction.Unknown;
+        private string commandLine = "";
+        private Dictionary<string, string> commandLineDictionary = new Dictionary<string, string>();
         private Display displayLevel = Display.Unknown;
         private RelatedOperation relatedOperation = RelatedOperation.None;
         private CustomLog customLog;
+        private CustomLogData customLogData = new();
 
         protected override void OnCreate(WixToolset.BootstrapperApplicationApi.CreateEventArgs args)
         {
@@ -36,22 +41,36 @@ namespace WpfApp1
 
             commandAction = args.Command.Action;
             displayLevel = args.Command.Display; // UIレベルを保存
+            commandLine = args.Command.CommandLine;
+            this.engine.Log(LogLevel.Standard, $"OnCreate: Action={commandAction}, Display={displayLevel}, commandline={commandLine}");
 
-            this.engine.Log(LogLevel.Standard, $"OnCreate: Action={commandAction}, Display={displayLevel}");
+            commandLineDictionary = ParseCommandLine(commandLine);
         }
 
         protected override void Run()
         {
-            customLog = new();
+
+            if (commandLineDictionary.TryGetValue("CUSTOMGUID", out string? guid))
+            {
+                customLogData.guid = guid;
+                this.engine.Log(LogLevel.Standard, $"CUSTOMGUID parsed value: {guid}");
+            }
+
+            var logPath = this.engine.GetVariableString("WixBundleLog");
+            customLog = new(this.engine.Log, logPath, customLogData.guid);
+
 
             this.engine.Log(LogLevel.Standard, "BA IS ALIVE!");
 
             this.BADispatcher = Dispatcher.CurrentDispatcher;
 
+            this.ExecutePackageComplete += OnExecutePackageComplete;
+
             this.engine.Detect();
 
             Dispatcher.Run();
-            this.engine.Quit(0);
+
+            CustomBAQuit(EXITCODE_SUCCESS);
         }
         protected override void OnDetectRelatedMsiPackage(DetectRelatedMsiPackageEventArgs args)
         {
@@ -79,7 +98,8 @@ namespace WpfApp1
                     this.engine.Log(LogLevel.Standard, $"新しいバージョンが既にインストールされています。");
                     System.Windows.MessageBox.Show("新しいバージョンが既にインストールされています。", "中断");
                     this.BADispatcher.InvokeShutdown();
-                    this.engine.Quit(ERROR_PRODUCT_VERSION);
+
+                    CustomBAQuit(EXITCODE_PRODUCT_VERSION);
                 }
                 else
                 {
@@ -116,10 +136,6 @@ namespace WpfApp1
             }
 
             // 通常時（UI表示が必要な場合）
-            this.BADispatcher!.Invoke(() => {
-                // MainWindowの作成と表示
-            });
-
             this.BADispatcher!.Invoke(() =>
             {
                 this.ViewModel = new MainWindowViewModel(this);
@@ -143,9 +159,8 @@ namespace WpfApp1
             var message = "Shutdown," + args.Action.ToString() + "," + args.HResult.ToString();
             this.engine.Log(LogLevel.Standard, message);
 
-            customLog.LogData.var1 = "hogehoge";
-            customLog.LogData.var2 = 100;
-            customLog.writeLog(this.engine.Log);
+            customLogData.exitCode = exitCode;
+            customLog.writeLog(customLogData);
         }
 
         /// <summary>
@@ -224,6 +239,12 @@ namespace WpfApp1
             }
         }
 
+        private void OnExecutePackageComplete(object? sender, ExecutePackageCompleteEventArgs e)
+        {
+            this.engine.Log(LogLevel.Standard, $"パッケージ {e.PackageId} が終了しました。ステータス: 0x{e.Status:X8}, Action: {e.Action}, HResult: {e.HResult}");
+            exitCode = e.Status;
+        }
+
         protected override void OnApplyComplete(ApplyCompleteEventArgs args)
         {
             base.OnApplyComplete(args);
@@ -264,6 +285,31 @@ namespace WpfApp1
                     this.MainWindow?.Close();
                 }
             });
+        }
+
+        private void CustomBAQuit(int excode)
+        {
+            exitCode = excode;
+            this.engine.Quit(excode);
+        }
+
+        private Dictionary<string, string> ParseCommandLine(string commandLine)
+        {
+            var args = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            if (string.IsNullOrWhiteSpace(commandLine)) return args;
+
+            // スペースで分割するが、引用符の中のスペースは無視する正規表現
+            var pattern = @"(?<name>[^=\s]+)=(?:""(?<value>[^""]*)""|(?<value>[^\s]*))";
+            var matches = System.Text.RegularExpressions.Regex.Matches(commandLine, pattern);
+
+            foreach (System.Text.RegularExpressions.Match match in matches)
+            {
+                string name = match.Groups["name"].Value;
+                string value = match.Groups["value"].Value;
+                args[name] = value;
+            }
+
+            return args;
         }
     }
 }

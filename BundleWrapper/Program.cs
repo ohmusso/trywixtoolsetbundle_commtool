@@ -52,7 +52,7 @@ namespace BundleWrapper
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
                     FileName = bundleExe,
-                    Arguments = $"-l \"{logPath}\"",
+                    Arguments = $"CUSTOMGUID=\"{guid}\" -l \"{logPath}\"",
                     UseShellExecute = true,
                     CreateNoWindow = false,
                     WindowStyle = ProcessWindowStyle.Normal
