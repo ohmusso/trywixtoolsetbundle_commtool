@@ -1,4 +1,5 @@
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+	 xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
 	<Fragment>
 		<Component Id="DesktopShortcut" Guid="{1849143C-55EA-4220-936D-1E2532543061}">
 			<Shortcut Id="AppShortcut"
@@ -6,11 +7,28 @@
 				Description="My Awesome Console Application"
 				Directory="DesktopFolder"
 				WorkingDirectory="INSTALLFOLDER"
-				Target="[INSTALLFOLDER]\ConsoleApp1.exe"
+			Target="[INSTALLFOLDER]\ConsoleApp1.exe"
 			/>
 			<RegistryValue Root="HKCU"
 			   Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components"
 			   Name="DesktopShortcut"
+			   Type="integer"
+			   Value="1"
+			   KeyPath="yes"
+			/>
+		</Component>
+
+		<Component Id="GoogleShortcut" Guid="{61638DC9-A738-464D-A339-D7A56ABE81D5}">
+			<File Id="test.ico" Source="test.ico" />
+			<util:InternetShortcut Id="GoogleShortcut"
+				Name="GoogleShortcut"
+				Directory="DesktopFolder"
+				Target="https://www.google.com/"
+			    IconFile="[#test.ico]"
+			/>
+			<RegistryValue Root="HKCU"
+			   Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components"
+			   Name="GoogleShortcut"
 			   Type="integer"
 			   Value="1"
 			   KeyPath="yes"

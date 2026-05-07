@@ -26,6 +26,9 @@
 			<ComponentRef Id="DesktopShortcut" />
 			<Level Value="0" Condition="CREATESHORTCUT=&quot;0&quot;" />
 		</Feature>
+		<Feature Id="GoogleShortcutFeature" Title="Shortcut" Level="1">
+			<ComponentRef Id="GoogleShortcut" />
+		</Feature>
 
 
 		<!-- 証明書ファイルのバイナリ登録 -->
