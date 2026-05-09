@@ -5,6 +5,7 @@ using System.Text;
 
 namespace WpfApp1
 {
+    using System.IO;
     using System.Windows;
     using System.Windows.Threading;
     using TryWpfAppCommTool.ViewModels;
@@ -26,6 +27,8 @@ namespace WpfApp1
         public const int EXITCODE_PRODUCT_VERSION = 1638; // この製品の別のバージョンが既にインストールされています。
         private int exitCode = 0;
 
+        private string sessionId = "";
+        private string logDirPath = "";
         private LaunchAction launchAction = LaunchAction.Unknown;
         private LaunchAction commandAction = LaunchAction.Unknown;
         private string commandLine = "";
@@ -49,16 +52,15 @@ namespace WpfApp1
 
         protected override void Run()
         {
-            if (commandLineDictionary.TryGetValue("CUSTOMGUID", out string? guid))
+            logDirPath = CreateLogFolder();
+
+            if (string.IsNullOrEmpty(logDirPath))
             {
-                customLogData.guid = guid;
-                this.engine.Log(LogLevel.Standard, $"CUSTOMGUID parsed value: {guid}");
+                CustomBAQuit(EXITCODE_INSTALL_FAILURE);
             }
 
-            var logPath = this.engine.GetVariableString("WixBundleLog");
-            customLog = new(this.engine.Log, logPath, customLogData.guid);
-
-            this.engine.SetVariableString("LogPath", logPath, false);
+            sessionId = this.engine.GetVariableString("WixBundleProviderKey");
+            customLog = new(this.engine.Log, logDirPath, sessionId);
 
             this.engine.Log(LogLevel.Standard, "BA IS ALIVE!");
 
@@ -162,6 +164,8 @@ namespace WpfApp1
             var message = "Shutdown," + args.Action.ToString() + "," + args.HResult.ToString();
             this.engine.Log(LogLevel.Standard, message);
 
+            MoveMsiLog();
+
             customLogData.exitCode = exitCode;
             customLog.writeLog(customLogData);
         }
@@ -242,12 +246,6 @@ namespace WpfApp1
             }
         }
 
-        private void OnExecutePackageComplete(object? sender, ExecutePackageCompleteEventArgs e)
-        {
-            this.engine.Log(LogLevel.Standard, $"パッケージ {e.PackageId} が終了しました。ステータス: 0x{e.Status:X8}, Action: {e.Action}, HResult: {e.HResult}");
-            exitCode = e.Status;
-        }
-
         protected override void OnApplyComplete(ApplyCompleteEventArgs args)
         {
             base.OnApplyComplete(args);
@@ -288,6 +286,101 @@ namespace WpfApp1
                     this.MainWindow?.Close();
                 }
             });
+        }
+
+        private String CreateLogFolder()
+        {
+            string path = "";
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string tempPath = Path.GetTempPath();
+            string logDirPath = this.engine.GetVariableString("LogDirectoryPathFromTemp");
+
+            try
+            {
+                path = Path.Combine(localAppData, logDirPath);
+                if (!Directory.Exists(path))
+                {
+                    this.engine.Log(LogLevel.Standard, $"Create Log Directory: {path}");
+                    Directory.CreateDirectory(path);
+                }
+                return path;
+            }
+            catch (Exception ex)
+            {
+                this.engine.Log(LogLevel.Error, $"Create Log Directory: {path}");
+            }
+
+            try
+            {
+                path = Path.Combine(tempPath, logDirPath);
+                if (!Directory.Exists(path))
+                {
+                    this.engine.Log(LogLevel.Standard, $"Create Log Directory: {path}");
+                    Directory.CreateDirectory(path);
+                }
+                return path;
+            }
+            catch (Exception ex)
+            {
+                this.engine.Log(LogLevel.Error, $"Create Log Directory: {path}");
+            }
+
+            return "";
+        }
+
+        private void MoveMsiLog()
+        {
+            if(this.engine.ContainsVariable("WixBundleLog_Package.msi"))
+            {
+                var msiLogPath = this.engine.GetVariableString("WixBundleLog_Package.msi");
+                var newMsiLogName = $"{sessionId}.msi.log";
+                var newMsiLogPath = Path.Combine(logDirPath, newMsiLogName);
+                this.engine.Log(LogLevel.Standard, $"MoveMsiLog: {msiLogPath}, {newMsiLogPath}");
+                MoveFile(msiLogPath, newMsiLogPath);
+            }
+
+
+            if (this.engine.ContainsVariable("WixBundleRollbackLog_Package.msi"))
+            {
+                var msiRollbackLogPath = this.engine.GetVariableString("WixBundleRollbackLog_Package.msi");
+                var newMsiRollbackLogName = $"{sessionId}.msi.Rollback.log";
+                var newMsiRollbackLogPath = Path.Combine(logDirPath, newMsiRollbackLogName);
+                this.engine.Log(LogLevel.Standard, $"MoveMsiLog: {msiRollbackLogPath}, {newMsiRollbackLogPath}");
+                MoveFile(msiRollbackLogPath, newMsiRollbackLogPath);
+            }
+
+        }
+
+        /// <summary>
+        /// 指定したファイルを移動先に移動します。
+        /// </summary>
+        /// <param name="sourceFilePath">対象ファイルパス</param>
+        /// <param name="destFilePath">移動先ディレクトリパス</param>
+        private void MoveFile(string sourceFilePath, string destFilePath)
+        {
+            try
+            {
+                if (!File.Exists(sourceFilePath))
+                {
+                    this.engine.Log(LogLevel.Standard, $"MoveMsiLog not found: {sourceFilePath}");
+                    return;
+                }
+
+                this.engine.Log(LogLevel.Standard, $"MoveMsiLog: {sourceFilePath}, {destFilePath}");
+                File.Move(sourceFilePath, destFilePath);
+            }
+            catch (Exception ex)
+            {
+                // ディレクトリ作成権限がない場合や、
+                // 移動先に同名ファイルが既に存在する場合などはここに入ります。
+                // 仕様に基づき、エラー時は「何もしない」で抜けます。
+            }
+        }
+
+        private void OnExecutePackageComplete(object? sender, ExecutePackageCompleteEventArgs e)
+        {
+            this.engine.Log(LogLevel.Standard, $"パッケージ {e.PackageId} が終了しました。ステータス: 0x{e.Status:X8}, Action: {e.Action}, HResult: {e.HResult}");
+            exitCode = e.Status;
         }
 
         private void CustomBAQuit(int excode)

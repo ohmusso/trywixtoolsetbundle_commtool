@@ -22,6 +22,7 @@
 		</BootstrapperApplication>
 
 		<Variable Name="CreateShortcut" Type="numeric" Value="1" />
+		<Variable Name="LogDirectoryPathFromTemp" Type="string" Value="$(var.Manufacturer)\$(var.ProductName)\Log" />
 
 		<util:RegistrySearch
 			Id="SearchLogDir"

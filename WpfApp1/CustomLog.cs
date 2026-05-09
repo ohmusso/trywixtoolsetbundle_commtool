@@ -18,10 +18,9 @@ namespace WpfApp1
     {
         private String _filePath = "";
         private CustomBALog _customBALog;
-        public CustomLog(CustomBALog customBALog, String logFilePath, String guid) {
-            string directoryPath = Path.GetDirectoryName(logFilePath);
+        public CustomLog(CustomBALog customBALog, String logDirPath, String guid) {
             string fileName = $"Customlog_{guid}.json";
-            _filePath = Path.Combine(directoryPath, fileName);
+            _filePath = Path.Combine(logDirPath, fileName);
 
             _customBALog = customBALog;
             _customBALog(LogLevel.Standard, $"カスタムログフルパス: {_filePath}");
