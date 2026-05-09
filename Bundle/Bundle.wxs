@@ -9,7 +9,7 @@
 		Name="Bundle"
 		Manufacturer="TODO Manufacturer"
 		UpgradeCode="{67E841C9-3044-4DFC-87CC-0D23BB72FD7C}"
-		Version="1.0.0"
+		Version="$(var.ProductVersion)"
 		>
 		<BootstrapperApplication SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.exe">
 			<Payload SourceFile="$(var.WpfApp1.TargetDir)WpfApp1.deps.json" Name="WpfApp1.deps.json" />

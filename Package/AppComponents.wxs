@@ -37,7 +37,7 @@
 									Request="no" />
 				<RegistryValue Root="HKCU" Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components" Name="IntermediateCert" Type="integer" Value="1" KeyPath="yes" />
 			</Component>
-			<Component Id="RegLogPath" Guid="*">
+			<Component Id="RegLogPath" Guid="{84EF1CD2-A4A2-4005-B0BF-F699F4BF244E}">
 				<RegistryKey Root="HKCU" Key="Software\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)\Components">
 					<RegistryValue Name="LogPath" Type="string" Value="[LOGPATH]" KeyPath="yes" />
 				</RegistryKey>

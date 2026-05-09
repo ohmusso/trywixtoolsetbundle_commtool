@@ -129,9 +129,8 @@ namespace WpfApp1
             // 状態が Present であればインストール済み
             this.engine.Log(LogLevel.Standard, $"検出完了: パッケージ {args.PackageId} の状態: {args.State}");
 
-            // サイレントモード（Upgrade等）かつ アンインストール要求の場合
-            if ((displayLevel == Display.None || displayLevel == Display.Embedded) &&
-                launchAction == LaunchAction.Uninstall)
+            // サイレントモード（Upgrade等）の場合
+            if (displayLevel == Display.None || displayLevel == Display.Embedded)
             {
                 this.engine.Log(LogLevel.Standard, "サイレントモードでのアンインストールを開始します（UI非表示）。");
 
@@ -166,7 +165,10 @@ namespace WpfApp1
 
             MoveMsiLog();
 
+            customLogData.sessionId = sessionId;
             customLogData.exitCode = exitCode;
+            customLogData.operation = relatedOperation.ToString();
+            customLogData.action = launchAction.ToString();
             customLog.writeLog(customLogData);
         }
 
@@ -250,6 +252,8 @@ namespace WpfApp1
         {
             base.OnApplyComplete(args);
 
+            exitCode = args.Status;
+
             // エンジンのログに結果を記録
             this.engine.Log(LogLevel.Standard, $"Apply完了: ステータス 0x{args.Status:X}");
 
@@ -286,6 +290,7 @@ namespace WpfApp1
                     this.MainWindow?.Close();
                 }
             });
+
         }
 
         private String CreateLogFolder()

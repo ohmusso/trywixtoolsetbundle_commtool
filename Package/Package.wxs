@@ -8,9 +8,9 @@
 		Name="Package" 
 		Scope="perUser"
 		Manufacturer="TODO Manufacturer" 
-		Version="1.0.0"
 		ProductCode="*"
 		UpgradeCode="{AEA9E389-E9D4-4312-BBED-FE534C03CE77}"
+		Version="$(var.ProductVersion)"
 	>
 		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 		<WixVariable Id="WixUILicenseRtf" Value="!(loc.LicenseFile)" />

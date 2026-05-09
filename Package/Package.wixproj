@@ -1,16 +1,30 @@
 ﻿<Project Sdk="WixToolset.Sdk/7.0.0">
-  <PropertyGroup>
-    <AcceptEula>wix7</AcceptEula>
-    <Cultures>ja-JP;en-US</Cultures>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="Setting.wxi" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ConsoleApp1\ConsoleApp1.csproj" />
-    <ProjectReference Include="..\CustomAction\CustomAction.csproj" />
-    <PackageReference Include="WixToolset.Iis.wixext" Version="7.0.0" />
-    <PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
-    <PackageReference Include="WixToolset.Util.wixext" Version="7.0.0" />
-  </ItemGroup>
+	<PropertyGroup>
+		<AcceptEula>wix7</AcceptEula>
+		<Cultures>ja-JP;en-US</Cultures>
+	</PropertyGroup>
+	<PropertyGroup>
+		<SignOutput>true</SignOutput>
+	</PropertyGroup>
+	<PropertyGroup>
+		<SignToolPath>"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe"</SignToolPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="Setting.wxi" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ConsoleApp1\ConsoleApp1.csproj" />
+		<ProjectReference Include="..\CustomAction\CustomAction.csproj" />
+		<PackageReference Include="WixToolset.Iis.wixext" Version="7.0.0" />
+		<PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
+		<PackageReference Include="WixToolset.Util.wixext" Version="7.0.0" />
+	</ItemGroup>
+	<Target Name="SignCabs">
+		<Message Importance="high" Text="SignCabs: @(SignCabs)" />
+		<Exec Command="$(SignToolPath) sign /sha1 44c9bd434cc461cbb4eb84946c0ce5dc313fa817 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %(SignCabs.FullPath)" />
+	</Target>
+	<Target Name="SignMsi">
+		<Message Importance="high" Text="SignMsi: @(SignMsi)" />
+		<Exec Command="$(SignToolPath) sign /sha1 44c9bd434cc461cbb4eb84946c0ce5dc313fa817 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %(SignMsi.FullPath)" />
+	</Target>
 </Project>

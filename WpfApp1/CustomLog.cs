@@ -8,8 +8,10 @@ namespace WpfApp1
 {
     public class CustomLogData
     {
-        public string guid { get; set; }
+        public string sessionId { get; set; }
         public int exitCode { get; set; }
+        public string operation {  get; set; }
+        public string action { get; set; }
     }
 
     public delegate void CustomBALog(LogLevel level, string messagey);
@@ -18,8 +20,8 @@ namespace WpfApp1
     {
         private String _filePath = "";
         private CustomBALog _customBALog;
-        public CustomLog(CustomBALog customBALog, String logDirPath, String guid) {
-            string fileName = $"Customlog_{guid}.json";
+        public CustomLog(CustomBALog customBALog, String logDirPath, String sessionId) {
+            string fileName = $"{sessionId}.Customlog.json";
             _filePath = Path.Combine(logDirPath, fileName);
 
             _customBALog = customBALog;
