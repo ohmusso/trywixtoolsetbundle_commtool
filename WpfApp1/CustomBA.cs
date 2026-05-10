@@ -5,6 +5,7 @@ using System.Text;
 
 namespace WpfApp1
 {
+    using System.Diagnostics;
     using System.IO;
     using System.Windows;
     using System.Windows.Threading;
@@ -177,6 +178,36 @@ namespace WpfApp1
         /// </summary>
         public void StartInstallation()
         {
+            foreach (var process in System.Diagnostics.Process.GetProcessesByName("ConsoleApp1"))
+            {
+                // メッセージボックスを表示し、結果をプロパティに格納
+                MessageBoxResult result = MessageBox.Show(
+                    "アプリケーションが実行中です。終了してインストールを継続しますか？",
+                    "確認",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        process.Kill();
+                        process.WaitForExit(5000);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show("アプリケーションの終了に失敗しました。", "エラー");
+                        CustomBAQuit(EXITCODE_INSTALL_FAILURE);
+                        return;
+                    }
+                }
+                else
+                {
+                    CustomBAQuit(EXITCODE_CANCELLED);
+                    return;
+                }
+            }
+
             if (ViewModel!.IsShortcut)
             {
                 this.engine.SetVariableNumeric("CreateShortcut", 1);
@@ -290,7 +321,6 @@ namespace WpfApp1
                     this.MainWindow?.Close();
                 }
             });
-
         }
 
         private String CreateLogFolder()
@@ -391,6 +421,13 @@ namespace WpfApp1
         private void CustomBAQuit(int excode)
         {
             exitCode = excode;
+
+            if (this.MainWindow != null)
+            {
+                ViewModel.IsNotInstalling = true;
+                this.MainWindow.Close();
+            }
+
             this.engine.Quit(excode);
         }
 
