@@ -9,8 +9,8 @@ namespace WpfApp1
     using System.IO;
     using System.Windows;
     using System.Windows.Threading;
-    using TryWpfAppCommTool.ViewModels;
     using WixToolset.BootstrapperApplicationApi;
+    using WpfApp1.ViewModels;
     using WpfApp1.Views;
 
     public class CustomBA : BootstrapperApplication
@@ -18,6 +18,7 @@ namespace WpfApp1
         public Dispatcher? BADispatcher { get; private set; }
         public Window? MainWindow { get; private set; }
         public MainWindowViewModel? ViewModel { get; private set; }
+        public bool isInstalling = false;
 
         private const BundleScope bundleScope = BundleScope.PerUser;
 
@@ -144,8 +145,8 @@ namespace WpfApp1
             this.BADispatcher!.Invoke(() =>
             {
                 this.ViewModel = new MainWindowViewModel(this);
-                ViewModel.DispText = dispText;
-                ViewModel.IsInstall = isInstall;
+                ViewModel.startViewModel.DispText = dispText;
+                ViewModel.startViewModel.IsInstall = isInstall;
 
                 var window = new MainWindow();
                 window.DataContext = this.ViewModel; // DataContextにセット
@@ -208,7 +209,10 @@ namespace WpfApp1
                 }
             }
 
-            if (ViewModel!.IsShortcut)
+            this.ViewModel.ShowInstallingView();
+            isInstalling = true;
+
+            if (ViewModel.startViewModel.IsShortcut)
             {
                 this.engine.SetVariableNumeric("CreateShortcut", 1);
             }
@@ -224,13 +228,6 @@ namespace WpfApp1
 
             this.engine.Log(LogLevel.Standard, $"MSIのインストール処理を開始します。 LaunchAction: {launchAction}, Scope: {bundleScope}, CreateShortcut: 0");
             this.engine.Plan(launchAction, bundleScope);
-        }
-
-        public void StartUninstallation()
-        {
-            this.engine.Log(LogLevel.Standard, "アンインストール処理を開始します。");
-            // アンインストールとして計画を立てる
-            //this.engine.Plan(LaunchAction.Uninstall, BundleScope.PerUser);
         }
 
         // 計画が完了した時に呼ばれるイベントをオーバーライド
@@ -317,7 +314,7 @@ namespace WpfApp1
                     }
                     // ウィンドウを閉じる
                     // これにより Run メソッド内の Dispatcher.Run() が終了し、engine.Quit(0) へ進みます
-                    this.ViewModel.IsNotInstalling = true;
+                    isInstalling = false;
                     this.MainWindow?.Close();
                 }
             });
@@ -424,7 +421,7 @@ namespace WpfApp1
 
             if (this.MainWindow != null)
             {
-                ViewModel.IsNotInstalling = true;
+                isInstalling = false;
                 this.MainWindow.Close();
             }
 

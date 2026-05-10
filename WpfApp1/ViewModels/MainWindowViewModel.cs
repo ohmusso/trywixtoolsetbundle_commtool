@@ -4,50 +4,34 @@ using System.ComponentModel;
 using System.Windows;
 using WpfApp1;
 
-namespace TryWpfAppCommTool.ViewModels
+namespace WpfApp1.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
         private readonly CustomBA _ba;
+        public StartViewModel startViewModel;
+        public InstallingViewModel installingViewMoel;
+
+        [ObservableProperty]
+        private object? _currentViewModel;
 
         public MainWindowViewModel(CustomBA ba)
         {
             _ba = ba;
+            startViewModel = new(ba);
+            installingViewMoel = new(ba);
+
+            _currentViewModel = startViewModel;
         }
 
-        [ObservableProperty]
-        public partial bool IsInstall{ get; set; } = false;
-        [ObservableProperty]
-        public partial string DispText { get; set; } = "none";
-        [ObservableProperty]
-        public partial bool IsShortcut{ get; set; } = false;
-        [ObservableProperty]
-        public partial bool IsNotInstalling { get; set; } = true;
-
-        //[RelayCommand]
-        //private void UpdateCount()
-        //{
-        //    Console.WriteLine("click");
-        //    Count++;
-        //    _countModel.count = Count;
-        //}
-        [RelayCommand]
-        private void Install()
+        public void ShowInstallingView()
         {
-            IsNotInstalling = false;
-            _ba.StartInstallation();
-        }
-
-        [RelayCommand]
-        private void UnInstall()
-        {
-            IsNotInstalling = false;
-            _ba.StartUninstallation();
+            CurrentViewModel = installingViewMoel;
         }
 
         public void OnWindowClosing(object sender, CancelEventArgs e)
         {
-            if (IsNotInstalling)
+            if (!_ba.isInstalling)
             {
                 // 終了
                 _ba.BADispatcher.InvokeShutdown();

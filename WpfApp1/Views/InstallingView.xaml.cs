@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,12 +13,12 @@ using System.Windows.Shapes;
 
 namespace WpfApp1.Views
 {
-    using System.Windows;
-    using WpfApp1.ViewModels;
-    using WixToolset.BootstrapperApplicationApi;
-    public partial class MainWindow : Window
+    /// <summary>
+    /// InstallingView.xaml の相互作用ロジック
+    /// </summary>
+    public partial class InstallingView : UserControl
     {
-        public MainWindow()
+        public InstallingView()
         {
             InitializeComponent();
         }
