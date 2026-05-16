@@ -7,6 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <Label Content="実行中" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <ProgressBar Width="100" IsIndeterminate="True"/>
+        </StackPanel>
     </Grid>
 </UserControl>
