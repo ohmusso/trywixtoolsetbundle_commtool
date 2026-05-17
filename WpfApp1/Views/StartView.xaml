@@ -12,7 +12,10 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Vertical" Grid.Row="0" VerticalAlignment="Center">
-            <TextBlock Text="{Binding DispText}" TextAlignment="Center" TextWrapping="Wrap" Width="247" Grid.Row="0" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Image Source="/Images/icon.png" Width="32" Height="32" Stretch="Uniform"/>
+                <TextBlock Text="{Binding DispText}" TextAlignment="Center" TextWrapping="Wrap" Width="247" Grid.Row="0" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label Content="ショートカットを作成"></Label>
                 <CheckBox IsChecked="{Binding IsShortcut}" IsEnabled="{Binding IsInstall}"  HorizontalAlignment="Center" VerticalAlignment="Center" />
